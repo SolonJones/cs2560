@@ -1,22 +1,32 @@
 #include <unistd.h>
+// unistd is for open read write fork execl _exit gitpid 
 #include <stdio.h>
+//sys/wait.h is for wait and waitpid() 
 #include <sys/wait.h>
 #include <stdlib.h>
+//stdlib is for exit()
 
 int main(int argc, char* argv[]) {  
-	int pid;
-	printf("Before: process id %d\n",getpid());
+	int who;
+	printf("parents' process id is %d\n",getpid());
 
-	if ((pid = fork())==0){
-		printf("I am the child %d\n",getpid());  
+	if ((who = fork())==0){
+		printf("I am child with fork return of %d and my id is %d\n", who, getpid());  
+        // fork will return 0 to child ps and cpid to parent ps 
 		sleep(5);
-		printf("Listing content of current directory...\n");  
+		printf("done with sleeping, now I will execlp() all rest of command \n");  
 		execlp("ls","ls","-l", (char *)0);
+        // this only diff from offeriong default path 
+        printf("fuck up");
+        exit(100);
 	}
 	else{
-		printf("I am the parent %d\n", getpid());  int status;
-		
-		int term_pid = wait(&status);
-		printf("Child %d has listed the content of current directory\n", term_pid);  exit(1);
+		printf("I am parents thread with who value of %d id of %d \n", who, getpid());  
+        int status;
+	    	
+		int cid = wait(&status);
+		printf("wait() had return chld id %d have terminated \n", cid);
+        printf("expect 0 for status: actual is %d", status);
+        exit(1);
 	}
 }

@@ -4,22 +4,22 @@
 #include <sys/wait.h>
 
 int docommand(char *command) {
-	pid_t pid;
-	
-	if((pid=fork())<0)
-	     return -1;
-
-	if (pid==0){ /*child*/
-	    execl("/bin/bash", "bash", "-c", command, (char*)0);
-	    perror("excel");
-            exit(1);
-	}
-p
-	//code for parent
-	wait((int *)0);
-	return 0;
+    execl("/bin/bash", "bash", "-c", command, (char*)0);
+    perror("excel");
+    exit(1);
 }
 
 int main(){
-	docommand("ls -lt");
+    int who;
+    who = fork();
+    if(who ==-1){
+        perror("fork");
+    }
+    else if(who == 0){
+        docommand("ls -lt");
+    }
+    else{
+        printf("parents %d real do nothing but wait for child %d to complete", getpid(), who);
+        wait((int *)NULL);
+    }
 }
